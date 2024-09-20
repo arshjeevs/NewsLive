@@ -7,7 +7,7 @@ import Btn from "./Components/Btn";
 import { useEffect } from "react";
 function App() {
   const [News, setNews] = useState([]);
-  let id = 0;
+  const [Page, setPage] = useState(1);
   const HandleFetch = async () => {
     const response = {
       status: "ok",
@@ -308,10 +308,30 @@ function App() {
   };
 
   useEffect(() => {
-    HandleFetch()
-  }, [])
-  
-  console.log(News)
+    HandleFetch();
+  }, []);
+
+  const selectPagehandler = (ind) => {
+    setPage(ind);
+  };
+
+  const nextPageHandler = (ind) => {
+    if (ind >= News.length / 10) {
+      console.log("no next page ");
+    } else {
+      setPage(ind + 1);
+    }
+  };
+
+  const prevPageHandler = (ind) => {
+    if (ind <= 1) {
+      console.log("no prev page ");
+    } else {
+      setPage(ind - 1);
+    }
+  };
+
+  console.log(News);
   return (
     <>
       <div className="Main box-border absolute m-0 p-0">
@@ -399,19 +419,48 @@ function App() {
           </div>
         </nav>
         <div className="h-[100px] w-full"></div>
-        <div className="Wrapper px-8 w-screen grid grid-cols-3 gap-8 ">
-          {
-            News.map( (item) => (
-              <Cards key={id+1} data={item}/>
-            ))
-          }
-          
+        <div className="w-screen">
+          {News.length > 0 && (
+            <div className="products">
+              {News.slice(Page * 10 - 10, Page * 10).map((item, index) => (
+                <Cards key={Page + 1} data={item} />
+              ))}
+            </div>
+          )}
+          {News.length > 0 && (
+            <div className="pagination">
+              <span
+                className={Page > 1 ? "" : "pagination__disabled"}
+                onClick={() => {
+                  prevPageHandler(Page);
+                }}
+              >
+                ⬅️
+              </span>
+              {[...Array(News.length / 10)].map((product, index) => (
+                <span
+                  className={Page === index + 1 ? "pagination__active" : ""}
+                  onClick={() => {
+                    selectPagehandler(index + 1);
+                  }}
+                  key={index + 1}
+                >
+                  {index + 1}
+                </span>
+              ))}
+              <span
+                className={
+                  Page < News.length / 10 ? "" : "pagination__disabled"
+                }
+                onClick={() => {
+                  nextPageHandler(Page);
+                }}
+              >
+                ➡️
+              </span>
+            </div>
+          )}
         </div>
-        <div className="flex justify-center gap-8 p-10 m-20">
-        <Btn name={"Prev"} />
-        <Btn name={"Back"} />
-        </div>
-        
       </div>
     </>
   );
