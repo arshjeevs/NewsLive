@@ -9,6 +9,13 @@ function App() {
   const [News, setNews] = useState([]);
   const [Page, setPage] = useState(1);
   const HandleFetch = async () => {
+    try{
+      const  response = await fetch(`https://newsapi.org/v2/everything?q=Apple&from=${Page}-09-20&sortBy=popularity&apiKey=2a8629dd57aa4be0aed6176f0814d02f`)
+      const data  = await response.json(); // This is the real time fetching of data
+      
+    }catch(err){
+      console.log(err);
+    }
     const response = {
       status: "ok",
       totalResults: 37,
@@ -423,7 +430,7 @@ function App() {
           {News.length > 0 && (
             <div className="products">
               {News.slice(Page * 10 - 10, Page * 10).map((item, index) => (
-                <Cards key={Page + 1} data={item} />
+                <Cards key={index} data={item} />
               ))}
             </div>
           )}
